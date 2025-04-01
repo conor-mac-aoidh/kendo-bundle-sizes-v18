@@ -1,0 +1,68 @@
+<div class="container">
+  <h1>{{ title }}</h1>
+
+  <div class="search-container">
+    <kendo-textbox
+      placeholder="Search products..."
+      [(ngModel)]="searchText"
+      (keyup.enter)="onSearch()">
+    </kendo-textbox>
+    <button kendoButton (click)="onSearch()">Search</button>
+  </div>
+
+  <kendo-grid
+    [data]="gridData"
+    [pageSize]="state.take"
+    [skip]="state.skip"
+    [sort]="state.sort"
+    [sortable]="true"
+    [pageable]="true"
+    [filterable]="false"
+    (dataStateChange)="onStateChange($event)">
+
+    <kendo-grid-column field="id" title="ID" [width]="80"></kendo-grid-column>
+    <kendo-grid-column field="name" title="Product Name" [width]="200"></kendo-grid-column>
+    <kendo-grid-column field="category" title="Category" [width]="120"></kendo-grid-column>
+    <kendo-grid-column field="price" title="Price" [width]="120">
+      <ng-template kendoGridCellTemplate let-dataItem>
+        {{ dataItem.price | currency }}
+      </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="inStock" title="In Stock" [width]="100">
+      <ng-template kendoGridCellTemplate let-dataItem>
+        <span [ngClass]="dataItem.inStock ? 'in-stock' : 'out-of-stock'">
+          {{ dataItem.inStock ? 'Yes' : 'No' }}
+        </span>
+      </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Actions" [width]="120">
+      <ng-template kendoGridCellTemplate let-dataItem>
+        <button kendoButton (click)="openDialog(dataItem)">Details</button>
+      </ng-template>
+    </kendo-grid-column>
+  </kendo-grid>
+</div>
+
+<kendo-dialog title="Product Details" *ngIf="dialogOpened" (close)="closeDialog()">
+  <div *ngIf="selectedProduct">
+    <div class="product-detail">
+      <strong>ID:</strong> {{ selectedProduct.id }}
+    </div>
+    <div class="product-detail">
+      <strong>Name:</strong> {{ selectedProduct.name }}
+    </div>
+    <div class="product-detail">
+      <strong>Category:</strong> {{ selectedProduct.category }}
+    </div>
+    <div class="product-detail">
+      <strong>Price:</strong> {{ selectedProduct.price | currency }}
+    </div>
+    <div class="product-detail">
+      <strong>In Stock:</strong> {{ selectedProduct.inStock ? 'Yes' : 'No' }}
+    </div>
+  </div>
+
+  <kendo-dialog-actions>
+    <button kendoButton (click)="closeDialog()">Close</button>
+  </kendo-dialog-actions>
+</kendo-dialog>
